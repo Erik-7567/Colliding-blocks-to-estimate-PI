@@ -3,7 +3,7 @@ from Physics import calculate_timeline
 
 class CollidingBlocks(MovingCameraScene):
     def construct(self):
-        n = 2 # how many decimal points of pi
+        n = 0 # how many decimal points of pi
         m1 = 100**n
         m2 = 1.0
         v1_start = -1.0
@@ -74,11 +74,11 @@ class CollidingBlocks(MovingCameraScene):
         
     
         old_scene = VGroup(wall, floor)
-        labels_scene = VGroup(counter_label,count_num)
+        labels_group = VGroup(counter_label,count_num)
         
         self.play(
             old_scene.animate.scale(0.7).to_edge(DOWN, buff=0.4),
-            labels_scene.animate.scale(0.9).to_edge(UP, buff=0.6),
+            labels_group.animate.scale(0.9).to_edge(UP, buff=0.6),
             run_time=2,
             rate_func=smooth
         )
@@ -87,16 +87,109 @@ class CollidingBlocks(MovingCameraScene):
         self.play(FadeOut(count_num), run_time=0.5)
         count_num.set_value(0)
         
+        coordinate_grid = NumberPlane(
+        x_range=[-1.25, 1.25, 0.5], 
+         y_range=[-1.25, 1.25, 0.5], 
+        x_length=3.75, 
+        y_length=3.75,
+        background_line_style={"stroke_color": WHITE, "stroke_width": 1}
+            )
         
 
+        self.play(
+            Create(coordinate_grid), 
+            run_time=1.5, 
+            rate_func=smooth
+            )
+        
         main_circle = Circle(radius=1.5, color=WHITE)
         
   
         self.play(
             Create(main_circle),
-            main_circle.animate.shift(UP*0.5),
             FadeIn(count_num),
             run_time=1.5,
             rate_func=smooth
         )
-  
+
+        self.play(
+            main_circle.animate.shift(UP*0.5),
+            coordinate_grid.animate.shift(UP*0.5),
+            run_time=1.5,
+            rate_func=smooth
+            )
+        
+        radius_line = Line(start=ORIGIN, end=RIGHT*1.5, color=WHITE, stroke_width=5,).shift(UP*0.5)
+        radius_label = MathTex("1").next_to(radius_line, UP, buff=0.1)
+        
+        self.play(
+             Create(radius_line),
+             Write(radius_label),
+             run_time=1
+             )
+
+        law1 = MathTex(r"P = m_1 v_1 + m_2 v_2").to_edge(LEFT, buff=0.5).scale(0.75)
+        law1_label = Text("Conservation of Momentum", color=BLUE).next_to(law1, UP, buff=0.3).scale(0.5)
+        law1_box = SurroundingRectangle(law1, color=BLUE, buff=0.2)
+
+        self.play(
+            FadeIn(law1_label),
+            FadeIn(law1_box),
+            run_time=1
+        )
+
+        self.play(
+            Write(law1),
+            run_time=2,
+            rate_func=smooth
+        )
+
+        self.wait(1)
+
+        self.play(
+            FadeOut(law1),
+            FadeOut(law1_label),
+            FadeOut(law1_box),
+             run_time=1
+        )
+
+        law1.to_edge(UP, buff = 1)
+
+        self.play(
+            FadeIn(law1),
+            runtime = 0.5
+        )
+
+
+        law2 = MathTex(r"E = \frac{1}{2} m_1 v_1^2 + \frac{1}{2} m_2 v_2^2").to_edge(LEFT, buff=0.5).scale(0.75)
+        law2_label = Text("Conservation of Energy", color=BLUE).next_to(law2, UP, buff=0.3).scale(0.5)
+        law2_box = SurroundingRectangle(law2, color=BLUE, buff=0.2)
+
+
+        self.play(
+            FadeIn(law2_label),
+            FadeIn(law2_box),
+            run_time=1
+        )
+    
+        self.play(
+            Write(law2),
+            run_time=2,
+            rate_func=smooth
+        )
+
+        self.wait(1)
+
+        self.play(
+            FadeOut(law2),
+            FadeOut(law2_label),
+            FadeOut(law2_box),
+             run_time=1
+        )
+        
+        law2.next_to(law1, DOWN, buff=0.5)
+
+        self.play(
+            FadeIn(law2),
+            runtime = 0.5
+        )
